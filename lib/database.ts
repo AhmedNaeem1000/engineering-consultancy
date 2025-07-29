@@ -1,9 +1,12 @@
 import { createClient } from "@supabase/supabase-js"
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Only create client if environment variables are available
+export const supabase = supabaseUrl && supabaseAnonKey 
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null
 
 // Database types
 export interface User {
@@ -127,6 +130,9 @@ export interface Review {
 export const db = {
   // Users
   async getUsers() {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     const { data, error } = await supabase.from("users").select("*").order("created_at", { ascending: false })
 
     if (error) throw error
@@ -134,6 +140,9 @@ export const db = {
   },
 
   async getUserById(id: string) {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     const { data, error } = await supabase.from("users").select("*").eq("id", id).single()
 
     if (error) throw error
@@ -141,6 +150,9 @@ export const db = {
   },
 
   async createUser(user: Omit<User, "id" | "created_at" | "updated_at">) {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     const { data, error } = await supabase.from("users").insert(user).select().single()
 
     if (error) throw error
@@ -149,6 +161,9 @@ export const db = {
 
   // Projects
   async getProjects() {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     const { data, error } = await supabase
       .from("projects")
       .select(`
@@ -163,6 +178,9 @@ export const db = {
   },
 
   async getProjectById(id: string) {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     const { data, error } = await supabase
       .from("projects")
       .select(`
@@ -178,6 +196,9 @@ export const db = {
   },
 
   async createProject(project: Omit<Project, "id" | "created_at" | "updated_at">) {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     const { data, error } = await supabase.from("projects").insert(project).select().single()
 
     if (error) throw error
@@ -185,6 +206,9 @@ export const db = {
   },
 
   async updateProject(id: string, updates: Partial<Project>) {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     const { data, error } = await supabase.from("projects").update(updates).eq("id", id).select().single()
 
     if (error) throw error
@@ -193,6 +217,9 @@ export const db = {
 
   // Services
   async getServices() {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     const { data, error } = await supabase.from("services").select("*").eq("is_active", true).order("name")
 
     if (error) throw error
@@ -201,6 +228,9 @@ export const db = {
 
   // Bookings
   async getBookings() {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     const { data, error } = await supabase
       .from("bookings")
       .select(`
@@ -216,6 +246,9 @@ export const db = {
   },
 
   async createBooking(booking: Omit<Booking, "id" | "created_at" | "updated_at">) {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     const { data, error } = await supabase.from("bookings").insert(booking).select().single()
 
     if (error) throw error
@@ -223,6 +256,9 @@ export const db = {
   },
 
   async updateBooking(id: string, updates: Partial<Booking>) {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     const { data, error } = await supabase.from("bookings").update(updates).eq("id", id).select().single()
 
     if (error) throw error
@@ -231,6 +267,9 @@ export const db = {
 
   // Blog Posts
   async getBlogPosts(status?: string) {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     let query = supabase.from("blog_posts").select(`
         *,
         author:users(full_name, avatar_url)
@@ -247,6 +286,9 @@ export const db = {
   },
 
   async getBlogPostBySlug(slug: string) {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     const { data, error } = await supabase
       .from("blog_posts")
       .select(`
@@ -261,12 +303,18 @@ export const db = {
   },
 
   async incrementBlogPostViews(id: string) {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     const { error } = await supabase.rpc("increment_post_views", { post_id: id })
     if (error) throw error
   },
 
   // Inquiries
   async getInquiries() {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     const { data, error } = await supabase
       .from("inquiries")
       .select(`
@@ -280,6 +328,9 @@ export const db = {
   },
 
   async createInquiry(inquiry: Omit<Inquiry, "id" | "created_at" | "updated_at">) {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     const { data, error } = await supabase.from("inquiries").insert(inquiry).select().single()
 
     if (error) throw error
@@ -288,6 +339,9 @@ export const db = {
 
   // Notifications
   async getNotifications(userId: string) {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     const { data, error } = await supabase
       .from("notifications")
       .select("*")
@@ -299,6 +353,9 @@ export const db = {
   },
 
   async createNotification(notification: Omit<Notification, "id" | "created_at">) {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     const { data, error } = await supabase.from("notifications").insert(notification).select().single()
 
     if (error) throw error
@@ -306,6 +363,9 @@ export const db = {
   },
 
   async markNotificationAsRead(id: string) {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     const { error } = await supabase.from("notifications").update({ is_read: true }).eq("id", id)
 
     if (error) throw error
@@ -313,6 +373,9 @@ export const db = {
 
   // Reviews
   async getReviews(featured?: boolean) {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     let query = supabase
       .from("reviews")
       .select(`
@@ -333,6 +396,9 @@ export const db = {
   },
 
   async createReview(review: Omit<Review, "id" | "created_at" | "updated_at">) {
+    if (!supabase) {
+      throw new Error("Supabase client not configured")
+    }
     const { data, error } = await supabase.from("reviews").insert(review).select().single()
 
     if (error) throw error
