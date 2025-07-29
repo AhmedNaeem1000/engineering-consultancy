@@ -4,6 +4,9 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { GoogleAnalytics } from "@/components/analytics/google-analytics"
 import { Chatbot } from "@/components/chatbot/chatbot"
+import { PageLoader } from "@/components/ui/loading-spinner"
+import { useEffect, useState } from "react"
+import InitialLoader from "@/components/layout/initial-loader"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -67,7 +70,7 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl">
       <body className={inter.className}>
-        {children}
+        <InitialLoader>{children}</InitialLoader>
         <Chatbot />
         {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
       </body>

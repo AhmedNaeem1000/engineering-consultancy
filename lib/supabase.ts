@@ -52,7 +52,7 @@ export const submitContactForm = async (data: ContactSubmission) => {
     return { success: true, data: result }
   } catch (error) {
     console.error("Contact form submission error:", error)
-    return { success: false, error: error.message }
+    return { success: false, error: (error as Error).message }
   }
 }
 
@@ -67,7 +67,7 @@ export const submitBooking = async (data: BookingSubmission) => {
     return { success: true, data: result }
   } catch (error) {
     console.error("Booking submission error:", error)
-    return { success: false, error: error.message }
+    return { success: false, error: (error as Error).message }
   }
 }
 
@@ -82,7 +82,7 @@ export const submitReview = async (data: Review) => {
     return { success: true, data: result }
   } catch (error) {
     console.error("Review submission error:", error)
-    return { success: false, error: error.message }
+    return { success: false, error: (error as Error).message }
   }
 }
 
@@ -98,6 +98,13 @@ export const getApprovedReviews = async () => {
     return { success: true, data }
   } catch (error) {
     console.error("Get reviews error:", error)
-    return { success: false, error: error.message }
+    return { success: false, error: (error as Error).message }
   }
+}
+
+// Helper for API routes (server-side)
+export function createServerClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+  return createClient(supabaseUrl, supabaseAnonKey);
 }
