@@ -1,9 +1,12 @@
 import { createClient } from "@supabase/supabase-js"
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Only create client if environment variables are available
+export const supabase = supabaseUrl && supabaseAnonKey 
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null
 
 // Types
 export interface ContactSubmission {
@@ -45,6 +48,10 @@ export interface Review {
 
 // Database functions
 export const submitContactForm = async (data: ContactSubmission) => {
+  if (!supabase) {
+    return { success: false, error: "Supabase client not configured" }
+  }
+  
   try {
     const { data: result, error } = await supabase.from("contact_submissions").insert([data]).select()
 
@@ -57,6 +64,10 @@ export const submitContactForm = async (data: ContactSubmission) => {
 }
 
 export const submitBooking = async (data: BookingSubmission) => {
+  if (!supabase) {
+    return { success: false, error: "Supabase client not configured" }
+  }
+  
   try {
     const { data: result, error } = await supabase
       .from("bookings")
@@ -72,6 +83,10 @@ export const submitBooking = async (data: BookingSubmission) => {
 }
 
 export const submitReview = async (data: Review) => {
+  if (!supabase) {
+    return { success: false, error: "Supabase client not configured" }
+  }
+  
   try {
     const { data: result, error } = await supabase
       .from("reviews")
@@ -87,6 +102,10 @@ export const submitReview = async (data: Review) => {
 }
 
 export const getApprovedReviews = async () => {
+  if (!supabase) {
+    return { success: false, error: "Supabase client not configured" }
+  }
+  
   try {
     const { data, error } = await supabase
       .from("reviews")
@@ -104,7 +123,12 @@ export const getApprovedReviews = async () => {
 
 // Helper for API routes (server-side)
 export function createServerClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error("Supabase environment variables are not configured");
+  }
+  
   return createClient(supabaseUrl, supabaseAnonKey);
 }
