@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { Menu, X, ChevronDown, Building2 } from "lucide-react"
+import { Menu, X, Phone, Mail, ChevronDown, MapPin, Building2 } from "lucide-react"
 
 const navigation = [
   { name: "الرئيسية", href: "/" },
